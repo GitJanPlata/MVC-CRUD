@@ -1,0 +1,7 @@
+CREATE TABLE Usuaris (
+    id NUMBER GENERATED ALWAYS AS IDENTITY,
+    nom VARCHAR2(100) NOT NULL,
+    correu_electronic VARCHAR2(100) NOT NULL,
+    edat Number(5) NOT NULL,
+    PRIMARY KEY(id)
+);
