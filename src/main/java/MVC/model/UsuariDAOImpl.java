@@ -5,23 +5,26 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UsuariDAOImpl implements UsuariDAOInterface {
+
+
+public class UsuariDAOImpl implements UsuariDAOInterface<Model.Usuari> {
+
     private static final String URL = "jdbc:oracle:thin:@localhost:1521:xe";
     private static final String USER = "sys as sysdba";
     private static final String PASS = "162710";
 
 
-    public Connection getConnection() {
+    public Connection getConnection() throws ConnexioInvalidaException {
         Connection connection = null;
         try {
             Class.forName("oracle.jdbc.OracleDriver");
             connection = DriverManager.getConnection(URL, USER, PASS);
         } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
+            throw new ConnexioInvalidaException("Error a l'establir la connexió: " + e.getMessage());
         }
         return connection;
     }
-    public void insertarUsuari(Model.Usuari usuari) throws DadesInvalidesException {
+    public void insertarUsuari(Model.Usuari usuari)  {
         String sql = "INSERT INTO Usuaris ( nom, correu_electronic, edat) VALUES (?, ?, ?)";
 
         // Validar les dades d'entrada
@@ -51,7 +54,7 @@ public class UsuariDAOImpl implements UsuariDAOInterface {
             pstmt.setString(3, usuari.getEdat());
 
             pstmt.executeUpdate();
-        } catch (SQLException e) {
+        } catch (SQLException | ConnexioInvalidaException e) {
             SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(null, "Error al insertar l'usuari: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE));
         }
     }
@@ -73,7 +76,7 @@ public class UsuariDAOImpl implements UsuariDAOInterface {
                 usuari.setCorreuElectronic(rs.getString("correu_electronic"));
                 usuari.setEdat(rs.getString("edat"));
             }
-        } catch (SQLException e) {
+        } catch (SQLException | ConnexioInvalidaException e) {
             SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(null, "Error al llegir l'usuari: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE));
         }
 
@@ -83,7 +86,7 @@ public class UsuariDAOImpl implements UsuariDAOInterface {
     public void actualitzarUsuari(Model.Usuari usuari) {
         String sql = "UPDATE Usuaris SET nom = ?, correu_electronic = ?, edat = ? WHERE id = ?";
 
-        // Validar los datos de entrada
+        // Validar les dades d'entrada
         try {
             if (!usuari.getNom().matches("[a-zA-Z ]+")) {
                 throw new DadesInvalidesException("El nom nomes pot contindre lletres i espais");
@@ -101,7 +104,7 @@ public class UsuariDAOImpl implements UsuariDAOInterface {
             return;
         }
 
-        // Si los datos son válidos, proceder con la actualización
+        // Si les dades són vàlides, procedeix amb l'actualització
         try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
@@ -111,7 +114,7 @@ public class UsuariDAOImpl implements UsuariDAOInterface {
             pstmt.setString(4, usuari.getId());
 
             pstmt.executeUpdate();
-        } catch (SQLException e) {
+        } catch (SQLException | ConnexioInvalidaException e) {
             SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(null, "Error al modificar l'usuari: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE));
         }
     }
@@ -133,7 +136,7 @@ public class UsuariDAOImpl implements UsuariDAOInterface {
             pstmt.setString(1, id);
 
             pstmt.executeUpdate();
-        } catch (SQLException e) {
+        } catch (SQLException | ConnexioInvalidaException e) {
             SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(null, "Error a l'esborrar l'usuari: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE));
         }}
 
@@ -150,7 +153,7 @@ public class UsuariDAOImpl implements UsuariDAOInterface {
             if (rs.next()) {
                 return true;
             }
-        } catch (SQLException e) {
+        } catch (SQLException | ConnexioInvalidaException e) {
             SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(null, "Error al verificar l'usuari: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE));
         }
 
@@ -173,7 +176,7 @@ public class UsuariDAOImpl implements UsuariDAOInterface {
                 usuari.setEdat(rs.getString("edat"));
                 usuaris.add(usuari);
             }
-        } catch (SQLException e) {
+        } catch (SQLException | ConnexioInvalidaException e) {
             System.out.println(e.getMessage());
         }
 

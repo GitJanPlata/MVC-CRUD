@@ -8,8 +8,18 @@ package MVC.model;
             private String correuElectronic;
             private String Edat;
 
+
             public String getEdat() {
                 return Edat;
+            }
+            public String getId() {
+                return id;
+            }
+            public String getNom() {
+                return nom;
+            }
+            public String getCorreuElectronic() {
+                return correuElectronic;
             }
             public void setEdat(String edat) {
                 Edat = edat;
@@ -23,15 +33,7 @@ package MVC.model;
             public void setCorreuElectronic(String correuElectronic) {
                 this.correuElectronic = correuElectronic;
             }
-            public String getId() {
-                return id;
-            }
-            public String getNom() {
-                return nom;
-            }
-            public String getCorreuElectronic() {
-                return correuElectronic;
-            }
+
 
         }
 

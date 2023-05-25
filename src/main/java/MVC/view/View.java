@@ -7,39 +7,17 @@ public class View extends JFrame {
     private JTextField campCorreuElectronic;
     private JTextField campEdat;
 
-
-
-
-    public JTextField getCampNom() {
-        return campNom;
-    }
-
-    public JTextField getCampCorreuElectronic() {
-        return campCorreuElectronic;
-    }
-
-    public JTextField getCampEdat() {
-        return campEdat;
-    }
-
-
     public JButton getModificarButton() {
         return modificarButton;
     }
-
-
 
     public JButton getLlegirButton() {
         return llegirButton;
     }
 
-
-
     public JButton getBorrarButton() {
         return borrarButton;
     }
-
-
 
     private JPanel panel1;
     private JLabel label1;
@@ -49,6 +27,7 @@ public class View extends JFrame {
     private JButton llegirButton;
     private JButton borrarButton;
 
+    private String selectedUserId;
 
     //Constructor de la classe
     public View() {
@@ -70,6 +49,9 @@ public class View extends JFrame {
 
     public JTable getTable1() {
         return table1;
+    }
+    public String getSelectedUserId() {
+        return selectedUserId;
     }
 }
 

@@ -23,7 +23,7 @@ public class Controlador {
         this.model = modelo;
         actualitzarTabla();
 
-        // agregar ActionListeners a los botones
+        // agregar ActionListeners als botones
         vista.getInsertarButton().addActionListener(e -> {
             try {
                 insertarUsuari();
@@ -31,23 +31,19 @@ public class Controlador {
                 throw new RuntimeException(ex);
             }
         });
-        vista.getModificarButton().addActionListener(e -> {
-            actualitzarUsuari();
-        });
+        vista.getModificarButton().addActionListener(e -> actualitzarUsuari());
         vista.getLlegirButton().addActionListener(e -> llegirUsuari());
-        vista.getBorrarButton().addActionListener(e -> {
-            eliminarUsuari();
-        });
+        vista.getBorrarButton().addActionListener(e -> eliminarUsuari());
     }
 
     private void insertarUsuari() throws DadesInvalidesException {
 
-        // Crea els campos de text per al formulari.
+        // Crea els camps de text per al formulari.
         JTextField nomField = new JTextField(5);
         JTextField correuElectronicField = new JTextField(5);
         JTextField edatField = new JTextField(5);
 
-        // Crea el panel y añade los campos de texto.
+        // Crea el panel y afegeix els camps de text.
         JPanel myPanel = new JPanel();
         myPanel.setLayout(new BoxLayout(myPanel, BoxLayout.Y_AXIS));
         myPanel.add(new JLabel("Nom:"));
@@ -84,32 +80,45 @@ public class Controlador {
         // Comprova si l'usuari ha especificat un ID
         if (id != null && !id.isEmpty()) {
             try {
-                Integer.parseInt(id); // intenta convertir el ID a un número enter
+                Integer.parseInt(id); // intenta convertir l'ID a un número enter
 
-                JTextField fieldNom = new JTextField(5);
-                JTextField fieldCorreuElectronic = new JTextField(5);
-                JTextField fieldEdat = new JTextField(5);
+                // Obté les dades de l'usuari corresponent al ID seleccionat
+                Model.Usuari usuariExist = model.llegirUsuari(id);
 
-                JPanel myPanel = new JPanel();
-                myPanel.setLayout(new BoxLayout(myPanel, BoxLayout.Y_AXIS));
-                myPanel.add(new JLabel("Nom:"));
-                myPanel.add(fieldNom);
-                myPanel.add(new JLabel("Correu Electronic:"));
-                myPanel.add(fieldCorreuElectronic);
-                myPanel.add(new JLabel("Edat:"));
-                myPanel.add(fieldEdat);
+                // Comprova si l'usuari existeix
+                if (usuariExist != null) {
+                    JTextField fieldNom = new JTextField(5);
+                    JTextField fieldCorreuElectronic = new JTextField(5);
+                    JTextField fieldEdat = new JTextField(5);
 
-                int result = JOptionPane.showConfirmDialog(null, myPanel,
-                        "Introdueix els valors de l'usuari", JOptionPane.OK_CANCEL_OPTION);
-                if (result == JOptionPane.OK_OPTION) {
-                    Model.Usuari usuari = new Model.Usuari();
-                    usuari.setId(id);
-                    usuari.setNom(fieldNom.getText());
-                    usuari.setCorreuElectronic(fieldCorreuElectronic.getText());
-                    usuari.setEdat(fieldEdat.getText());
+                    // Omple els camps d'input amb els valors de l'usuari seleccionat
+                    fieldNom.setText(usuariExist.getNom());
+                    fieldCorreuElectronic.setText(usuariExist.getCorreuElectronic());
+                    fieldEdat.setText(usuariExist.getEdat());
 
-                    model.actualitzarUsuari(usuari);
-                    actualitzarTabla();
+                    JPanel myPanel = new JPanel();
+                    myPanel.setLayout(new BoxLayout(myPanel, BoxLayout.Y_AXIS));
+                    myPanel.add(new JLabel("Nom:"));
+                    myPanel.add(fieldNom);
+                    myPanel.add(new JLabel("Correu Electronic:"));
+                    myPanel.add(fieldCorreuElectronic);
+                    myPanel.add(new JLabel("Edat:"));
+                    myPanel.add(fieldEdat);
+
+                    int result = JOptionPane.showConfirmDialog(null, myPanel,
+                            "Introdueix els valors de l'usuari", JOptionPane.OK_CANCEL_OPTION);
+                    if (result == JOptionPane.OK_OPTION) {
+                        Model.Usuari usuari = new Model.Usuari();
+                        usuari.setId(id);
+                        usuari.setNom(fieldNom.getText());
+                        usuari.setCorreuElectronic(fieldCorreuElectronic.getText());
+                        usuari.setEdat(fieldEdat.getText());
+
+                        model.actualitzarUsuari(usuari);
+                        actualitzarTabla();
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "No s'ha trobat cap usuari amb l'ID especificat.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             } catch (NumberFormatException e) {
                 JOptionPane.showMessageDialog(null, "El ID ha de ser un número enter.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -130,11 +139,11 @@ public class Controlador {
         int result = JOptionPane.showConfirmDialog(null, myPanel,
                 "Introdueix l'id de l'usuari", JOptionPane.OK_CANCEL_OPTION);
         if (result == JOptionPane.OK_OPTION) {
-            // Lee el usuario de la base de datos.
+            // Llegeix l'usuari de la base de dades.
             Model.Usuari usuari = model.llegirUsuari(fieldId.getText());
 
             if (usuari != null) {
-                // Create a new JPanel to display the user information
+                // Crea un Jpanel per a mostrar la informació
                 JPanel infoPanel = new JPanel();
                 infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
                 infoPanel.add(new JLabel("Nom: " + usuari.getNom()));
@@ -143,7 +152,7 @@ public class Controlador {
                 infoPanel.add(Box.createVerticalStrut(10));
                 infoPanel.add(new JLabel("Edat: " + usuari.getEdat()));
 
-                // Show the user information in a new JOptionPane
+                // Mostra la informació a l'usuari
                 JOptionPane.showMessageDialog(null, infoPanel, "Informació de l'usuari", JOptionPane.INFORMATION_MESSAGE);
             } else {
                 JOptionPane.showMessageDialog(null, "Introdueix un ID d'usuari valid!", "Error", JOptionPane.ERROR_MESSAGE);
@@ -160,7 +169,7 @@ public class Controlador {
         myPanel.add(fieldId);
 
         int result = JOptionPane.showConfirmDialog(null, myPanel,
-                "Insereix el Id de l'usuari a borrar", JOptionPane.OK_CANCEL_OPTION);
+                "Insereix el Id de l'usuari a eliminar", JOptionPane.OK_CANCEL_OPTION);
         if (result == JOptionPane.OK_OPTION) {
             String id = fieldId.getText();
             try {
